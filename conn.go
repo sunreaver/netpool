@@ -1,7 +1,6 @@
 package netpool
 
 import (
-	"context"
 	"net"
 	"sync/atomic"
 	"time"
@@ -35,49 +34,10 @@ func (cn *Conn) SetUsedAt(tm time.Time) {
 	atomic.StoreInt64(&cn.usedAt, tm.Unix())
 }
 
-func (cn *Conn) SetNetConn(netConn net.Conn) {
-	cn.netConn = netConn
-}
-
-func (cn *Conn) Write(b []byte) (int, error) {
-	return cn.netConn.Write(b)
-}
-
-func (cn *Conn) RemoteAddr() net.Addr {
-	if cn.netConn != nil {
-		return cn.netConn.RemoteAddr()
-	}
-	return nil
+func (cn *Conn) NetConn() net.Conn {
+	return cn.netConn
 }
 
 func (cn *Conn) Close() error {
 	return cn.netConn.Close()
-}
-
-func (cn *Conn) deadline(ctx context.Context, timeout time.Duration) time.Time {
-	tm := time.Now()
-	cn.SetUsedAt(tm)
-
-	if timeout > 0 {
-		tm = tm.Add(timeout)
-	}
-
-	if ctx != nil {
-		deadline, ok := ctx.Deadline()
-		if ok {
-			if timeout == 0 {
-				return deadline
-			}
-			if deadline.Before(tm) {
-				return deadline
-			}
-			return tm
-		}
-	}
-
-	if timeout > 0 {
-		return tm
-	}
-
-	return noDeadline
 }
