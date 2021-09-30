@@ -249,6 +249,7 @@ func (p *ConnPool) Get(ctx context.Context) (*Conn, error) {
 		}
 
 		atomic.AddUint32(&p.stats.Hits, 1)
+		cn.SetUsedAt(time.Now())
 		return cn, nil
 	}
 
