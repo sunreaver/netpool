@@ -328,6 +328,8 @@ func (p *ConnPool) popIdle() *Conn {
 	return cn
 }
 
+// 只要Get，必须Put
+// 如果 连接已经有问题（对端关闭), 只需要将 cn.SetUnPooled()
 func (p *ConnPool) Put(ctx context.Context, cn *Conn) {
 	if !cn.pooled {
 		p.Remove(ctx, cn, nil)

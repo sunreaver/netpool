@@ -12,7 +12,7 @@ type Conn struct {
 	usedAt    int64 // atomic
 	netConn   net.Conn
 	Inited    bool
-	pooled    bool
+	pooled    bool // 此链接是否需要返还
 	createdAt time.Time
 }
 
@@ -23,6 +23,10 @@ func newConn(netConn net.Conn) *Conn {
 	}
 	cn.SetUsedAt(time.Now())
 	return cn
+}
+
+func (cn *Conn) SetUnPooled() {
+	cn.pooled = false
 }
 
 func (cn *Conn) UsedAt() time.Time {
