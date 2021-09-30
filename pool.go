@@ -54,15 +54,15 @@ type Pooler interface {
 
 type Options struct {
 	Dialer  func(context.Context) (net.Conn, error)
-	OnClose func(*Conn) error
+	OnClose func(*Conn) error // 连接关闭时的回调
 
-	PoolFIFO           bool
-	PoolSize           int
-	MinIdleConns       int
-	MaxConnAge         time.Duration
-	PoolTimeout        time.Duration
-	IdleTimeout        time.Duration
-	IdleCheckFrequency time.Duration
+	PoolFIFO           bool          // 先进先出模式控制
+	PoolSize           int           // 连接池最大容量
+	MinIdleConns       int           // 最大空闲连接数
+	MaxConnAge         time.Duration // 连接最大存活时间（0：不生效
+	PoolTimeout        time.Duration // 获取连接池令牌最大等待时间
+	IdleTimeout        time.Duration // 连接空闲超过此时间则自动释放（0：不生效
+	IdleCheckFrequency time.Duration // 检测连接空闲时间的间隔（0：不生效
 }
 
 type lastDialErrorWrap struct {
